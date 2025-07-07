@@ -620,7 +620,7 @@ margin-top: 10px;
       <p class="lead">Créez votre CV en quelques minutes</p>
     </div>
 
-    <button id="installButton" class="btn btn-outline-light">
+    <button id="installButton" style="display: none;" class="btn-primary">
       <i class="fas fa-download"></i>
     </button>
   </div>
@@ -1361,11 +1361,11 @@ if ('serviceWorker' in navigator) {
 
 
     </script>
-  <script>
+<script>
   let deferredPrompt;
 
   window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault(); // Empêche le prompt automatique
+    e.preventDefault(); // Empêche le prompt auto
     deferredPrompt = e;
     const btn = document.getElementById('installButton');
     if (btn) btn.style.display = 'inline-block';
