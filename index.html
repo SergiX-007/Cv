@@ -1345,42 +1345,44 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 });
 
-// Enregistrement du Service Worker
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./service-worker.js')
-      .then(registration => {
-        console.log('Service Worker enregistré avec la portée:', registration.scope);
-      })
-      .catch(error => {
-        console.error('Échec de l\'enregistrement du Service Worker:', error);
-      });
-  });
-  }
-
-
-
-    </script>
-<script>
   let deferredPrompt;
 
   window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault(); // Empêche le prompt auto
+    e.preventDefault(); // Empêche le prompt automatique
     deferredPrompt = e;
     const btn = document.getElementById('installButton');
     if (btn) btn.style.display = 'inline-block';
   });
 
-  document.getElementById('installButton')?.addEventListener('click', async () => {
-    if (deferredPrompt) {
-      deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
-      console.log('Résultat de l\'installation :', outcome);
-      deferredPrompt = null;
-      document.getElementById('installButton').style.display = 'none';
-    }
+  window.addEventListener('DOMContentLoaded', () => {
+    const btn = document.getElementById('installButton');
+    if (!btn) return;
+
+    btn.addEventListener('click', async () => {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        console.log('Résultat de l\'installation :', outcome);
+        deferredPrompt = null;
+        btn.style.display = 'none';
+      }
+    });
   });
+
+  // Enregistrement du Service Worker
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./service-worker.js')
+        .then(registration => {
+          console.log('Service Worker enregistré avec la portée :', registration.scope);
+        })
+        .catch(error => {
+          console.error('Échec de l\'enregistrement du Service Worker :', error);
+        });
+    });
+  }
 </script>
+
 
 </body>
 
