@@ -928,459 +928,451 @@ margin-top: 10px;
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // Variables de couleur
+    let currentPalette = 'beige-brown';
+    let deferredPrompt; // Pour la PWA
 
+    // Récupère le bouton d'installation
+    const installButton = document.getElementById('installButton');
 
-document.addEventListener('DOMContentLoaded', function () {
-  // Variables de couleur
-  let currentPalette = 'beige-brown';
-  let deferredPrompt; // Pour la PWA
+    // --- Logique PWA (Progressive Web App) ---
 
-  // Récupère le bouton d'installation
-  const installButton = document.getElementById('installButton');
+    // Gestion de l'événement 'beforeinstallprompt' :
+    // Cet événement est déclenché par le navigateur lorsqu'une PWA peut être installée.
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault(); // Empêche le prompt automatique du navigateur
+      deferredPrompt = e;
+      console.log('Installation PWA disponible');
 
-  // Fonction pour vérifier si l'installation PWA est possible
-  function checkPWAInstallSupport() {
-    return 'BeforeInstallPromptEvent' in window;
-  }
-
-  // Fonction pour gérer l'installation
-  async function handleInstall() {
-    if (deferredPrompt) {
-      // Cas standard : l'événement beforeinstallprompt a été déclenché
-      deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
-      if (outcome === 'accepted') {
-        showSuccessMessage('Application installée avec succès !');
+      // Afficher le bouton d'installation si l'installation est possible
+      if (installButton) {
+        installButton.style.display = 'inline-block'; // Rendre le bouton visible
+        installButton.disabled = false; // S'assurer qu'il n'est pas désactivé
+        installButton.title = 'Installer l\'application'; // Réinitialiser le titre
       }
-      deferredPrompt = null;
-    } else if (checkPWAInstallSupport()) {
-      // L'API est disponible mais l'événement n'a pas encore été déclenché
-      showErrorMessage('Prêt à installer - revenez plus tard ou actualisez la page.');
-    } else {
-      // L'installation PWA n'est pas supportée
-      showErrorMessage('L\'installation d\'application n\'est pas disponible sur votre navigateur.');
-    }
-  }
+    });
 
-  // Événement de clic sur le bouton
-  if (installButton) {
-    installButton.addEventListener('click', handleInstall);
-  }
-
-  // Gestion de l'événement beforeinstallprompt (si disponible)
-  window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-    console.log('Installation PWA disponible');
-  });
-
-  // Vérification au chargement de la page
-  if (!checkPWAInstallSupport()) {
-    console.log('Installation PWA non supportée');
+    // Gérer le clic sur le bouton d'installation
     if (installButton) {
-      installButton.disabled = true;
-      installButton.title = 'Fonction non disponible sur ce navigateur';
-    }
-  }
+      installButton.addEventListener('click', async () => {
+        if (deferredPrompt) {
+          // Afficher le prompt d'installation au moyen de l'événement sauvegardé
+          deferredPrompt.prompt();
+          // Attendre la réponse de l'utilisateur (accepté ou refusé)
+          const { outcome } = await deferredPrompt.userChoice;
+          console.log(`Réponse de l'utilisateur à l'installation: ${outcome}`);
 
-  // Cache le bouton si l'app est déjà installée
-  window.addEventListener('appinstalled', () => {
-    if (installButton) installButton.style.display = 'none';
-  });
-
-  // Gestion des expériences
-  document.getElementById('add-experience').addEventListener('click', function () {
-    const container = document.getElementById('experiences-container');
-    const items = container.querySelectorAll('.experience-item');
-    const newItem = items[0].cloneNode(true);
-
-    // Réinitialiser les valeurs
-    newItem.querySelectorAll('input').forEach(input => input.value = '');
-    newItem.querySelector('textarea').value = '';
-
-    container.appendChild(newItem);
-  });
-
-  // Gestion des formations
-  document.getElementById('add-formation').addEventListener('click', function () {
-    const container = document.getElementById('formations-container');
-    const items = container.querySelectorAll('.formation-item');
-    const newItem = items[0].cloneNode(true);
-
-    // Réinitialiser les valeurs
-    newItem.querySelectorAll('input').forEach(input => input.value = '');
-
-    container.appendChild(newItem);
-  });
-
-  // Supprimer un élément
-  document.addEventListener('click', function (e) {
-    if (e.target.closest('.btn-remove')) {
-      const item = e.target.closest('.array-item');
-      const container = item.parentElement;
-      // Ne pas supprimer s'il ne reste qu'un élément
-      if (container.children.length > 1) {
-        item.remove();
-      }
-    }
-  });
-
-  // Mise à jour de la photo
-  document.getElementById('photo').addEventListener('change', function (e) {
-    if (this.files && this.files[0]) {
-      const reader = new FileReader();
-      reader.onload = function (event) {
-        const img = new Image();
-        img.onload = function () {
-          const canvas = document.createElement('canvas');
-          const ctx = canvas.getContext('2d');
-          const size = 120;
-          canvas.width = size;
-          canvas.height = size;
-
-          const imgAspectRatio = img.width / img.height;
-          const canvasAspectRatio = canvas.width / canvas.height;
-          let sx, sy, sWidth, sHeight;
-
-          if (imgAspectRatio > canvasAspectRatio) {
-            sHeight = img.height;
-            sWidth = img.height * canvasAspectRatio;
-            sx = (img.width - sWidth) / 2;
-            sy = 0;
+          if (outcome === 'accepted') {
+            showSuccessMessage('Application installée avec succès !');
           } else {
-            sWidth = img.width;
-            sHeight = img.width / canvasAspectRatio;
-            sx = 0;
-            sy = (img.height - sHeight) / 2;
+            console.log('Installation refusée par l\'utilisateur.');
+            // Si l'utilisateur refuse, le bouton reste visible pour réessayer plus tard
           }
+          deferredPrompt = null; // Réinitialiser deferredPrompt après le prompt
+        } else {
+          // Fallback si 'beforeinstallprompt' n'a pas été déclenché ou a déjà été consommé
+          showErrorMessage('L\'installation est en attente ou non supportée. Veuillez réessayer ou vérifier le support PWA de votre navigateur.');
+        }
+      });
+    }
 
-          ctx.beginPath();
-          ctx.arc(size / 2, size / 2, size / 2, 0, Math.PI * 2);
-          ctx.closePath();
-          ctx.clip();
+    // Événement déclenché lorsque l'application est déjà installée
+    window.addEventListener('appinstalled', () => {
+      // Cache le bouton d'installation si l'application vient d'être installée
+      if (installButton) {
+        installButton.style.display = 'none';
+      }
+      console.log('PWA a été installée avec succès !');
+    });
 
-          ctx.drawImage(img, sx, sy, sWidth, sHeight, 0, 0, size, size);
-          document.getElementById('photo-preview').src = canvas.toDataURL('image/png');
+    // Enregistrement du Service Worker
+    // Le Service Worker gère la mise en cache des ressources pour le mode hors ligne.
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => { // Utiliser 'load' pour s'assurer que tout le DOM est chargé
+        navigator.serviceWorker.register('./service-worker.js')
+          .then(registration => {
+            console.log('Service Worker enregistré avec la portée :', registration.scope);
+          })
+          .catch(error => {
+            console.error('Échec de l\'enregistrement du Service Worker :', error);
+          });
+      });
+    }
+
+    // --- Fin de la logique PWA ---
+
+    // Gestion des expériences
+    document.getElementById('add-experience').addEventListener('click', function () {
+      const container = document.getElementById('experiences-container');
+      // Clone le premier élément existant pour créer un nouveau champ
+      const items = container.querySelectorAll('.experience-item');
+      const newItem = items[0].cloneNode(true);
+
+      // Réinitialiser les valeurs des champs du nouvel élément
+      newItem.querySelectorAll('input').forEach(input => input.value = '');
+      newItem.querySelector('textarea').value = '';
+
+      container.appendChild(newItem);
+    });
+
+    // Gestion des formations
+    document.getElementById('add-formation').addEventListener('click', function () {
+      const container = document.getElementById('formations-container');
+      // Clone le premier élément existant pour créer un nouveau champ
+      const items = container.querySelectorAll('.formation-item');
+      const newItem = items[0].cloneNode(true);
+
+      // Réinitialiser les valeurs des champs du nouvel élément
+      newItem.querySelectorAll('input').forEach(input => input.value = '');
+
+      container.appendChild(newItem);
+    });
+
+    // Supprimer un élément (expérience ou formation)
+    document.addEventListener('click', function (e) {
+      if (e.target.closest('.btn-remove')) {
+        const item = e.target.closest('.array-item');
+        const container = item.parentElement;
+        // Ne pas supprimer s'il ne reste qu'un seul élément (pour éviter un formulaire vide)
+        if (container.children.length > 1) {
+          item.remove();
+        }
+      }
+    });
+
+    // Mise à jour de la photo de profil
+    document.getElementById('photo').addEventListener('change', function (e) {
+      if (this.files && this.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function (event) {
+          const img = new Image();
+          img.onload = function () {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const size = 120; // Taille désirée pour l'image de prévisualisation
+            canvas.width = size;
+            canvas.height = size;
+
+            // Calculer les dimensions pour recadrer l'image au centre
+            const imgAspectRatio = img.width / img.height;
+            const canvasAspectRatio = canvas.width / canvas.height;
+            let sx, sy, sWidth, sHeight;
+
+            if (imgAspectRatio > canvasAspectRatio) {
+              sHeight = img.height;
+              sWidth = img.height * canvasAspectRatio;
+              sx = (img.width - sWidth) / 2;
+              sy = 0;
+            } else {
+              sWidth = img.width;
+              sHeight = img.width / canvasAspectRatio;
+              sx = 0;
+              sy = (img.height - sHeight) / 2;
+            }
+
+            // Appliquer un masque circulaire au canvas
+            ctx.beginPath();
+            ctx.arc(size / 2, size / 2, size / 2, 0, Math.PI * 2);
+            ctx.closePath();
+            ctx.clip();
+
+            // Dessiner l'image recadrée et masquée sur le canvas
+            ctx.drawImage(img, sx, sy, sWidth, sHeight, 0, 0, size, size);
+            document.getElementById('photo-preview').src = canvas.toDataURL('image/png');
+          };
+          img.src = event.target.result;
         };
-        img.src = event.target.result;
-      };
-      reader.readAsDataURL(this.files[0]);
-    }
-  });
-
-  // Gestion des palettes de couleurs
-  document.querySelectorAll('.color-option').forEach(option => {
-    option.addEventListener('click', function () {
-      document.querySelectorAll('.color-option').forEach(opt => {
-        opt.classList.remove('active');
-      });
-      this.classList.add('active');
-      currentPalette = this.dataset.palette;
-      updatePreview();
-    });
-  });
-
-  // Bouton de prévisualisation
-  document.getElementById('preview-btn').addEventListener('click', updatePreview);
-
-  // Mettre à jour la prévisualisation au chargement
-  updatePreview();
-
-  function updatePreview() {
-    // Mettre à jour les informations de base
-    document.getElementById('preview-name').textContent =
-      `${document.getElementById('prenom').value} ${document.getElementById('nom').value}`;
-
-    document.getElementById('preview-title').textContent =
-      document.getElementById('poste').value;
-
-    document.getElementById('preview-profile').textContent =
-      document.getElementById('profil').value;
-
-    // Mettre à jour la section contact
-    const contactContainer = document.getElementById('preview-contact');
-    contactContainer.innerHTML = '';
-
-    const contactItems = [
-      { icon: 'map-marker-alt', value: document.getElementById('lieu').value, id: 'location' },
-      { icon: 'phone', value: document.getElementById('telephone').value, id: 'phone' },
-      { icon: 'envelope', value: document.getElementById('email').value, id: 'email' },
-      { icon: 'linkedin', value: document.getElementById('linkedin').value, id: 'linkedin' },
-      { icon: 'globe', value: document.getElementById('website').value, id: 'website' }
-    ];
-
-    contactItems.forEach(item => {
-      if (item.value) {
-        const contactHTML = `
-          <div class="contact-item">
-            <span class="contact-icon"><i class="fas fa-${item.icon}"></i></span>
-            <span id="preview-${item.id}">${item.value}</span>
-          </div>
-        `;
-        contactContainer.innerHTML += contactHTML;
+        reader.readAsDataURL(this.files[0]);
       }
     });
 
-    // Mettre à jour les couleurs
-    updateColors();
-
-    // Mettre à jour les expériences
-    const expContainer = document.getElementById('preview-experiences');
-    expContainer.innerHTML = '';
-
-    document.querySelectorAll('.experience-item').forEach(item => {
-      const entreprise = item.querySelector('[name="entreprise"]').value;
-      const poste = item.querySelector('[name="posteExp"]').value;
-      const debut = item.querySelector('[name="debutExp"]').value;
-      const fin = item.querySelector('[name="finExp"]').value;
-      const taches = item.querySelector('[name="taches"]').value.split('\n').filter(t => t.trim() !== '');
-
-      if (entreprise || poste) {
-        const expHTML = `
-          <div class="cv-experience">
-            <div class="experience-company">${entreprise}</div>
-            <div class="experience-title">${poste}</div>
-            <div class="experience-date">${debut} - ${fin}</div>
-            <ul class="experience-tasks">
-              ${taches.map(t => `<li>${t}</li>`).join('')}
-            </ul>
-          </div>
-        `;
-        expContainer.innerHTML += expHTML;
-      }
-    });
-
-    // Mettre à jour les formations
-    const formContainer = document.getElementById('preview-formations');
-    formContainer.innerHTML = '';
-
-    document.querySelectorAll('.formation-item').forEach(item => {
-      const diplome = item.querySelector('[name="diplome"]').value;
-      const ecole = item.querySelector('[name="ecole"]').value;
-      const annees = item.querySelector('[name="annees"]').value;
-      const lieu = item.querySelector('[name="lieuFormation"]').value;
-
-      if (diplome || ecole) {
-        const formHTML = `
-          <div class="cv-formation">
-            <div class="experience-title">${diplome}</div>
-            <div>${ecole} | ${lieu}</div>
-            <div class="experience-date">${annees}</div>
-          </div>
-        `;
-        formContainer.innerHTML += formHTML;
-      }
-    });
-
-    // Mettre à jour les compétences
-    const compContainer = document.getElementById('preview-competences');
-    compContainer.innerHTML = '';
-
-    const competences = document.getElementById('competences').value.split(',').map(c => c.trim()).filter(c => c !== '');
-    competences.forEach(comp => {
-      compContainer.innerHTML += `<div class="badge-skill">${comp}</div>`;
-    });
-
-    // Mettre à jour les langues
-    const langContainer = document.getElementById('preview-langues');
-    langContainer.innerHTML = '';
-
-    const langues = document.getElementById('langues').value.split(',').map(l => l.trim()).filter(l => l !== '');
-    langues.forEach(lang => {
-      const [nom, niveau] = lang.split(':').map(p => p.trim());
-      if (nom && niveau) {
-        langContainer.innerHTML += `
-          <div class="language-item">
-            <div class="language-name">${nom}:</div>
-            <div class="language-level">${niveau}</div>
-          </div>
-        `;
-      }
-    });
-
-    // Mettre à jour les hobbies
-    const hobbiesContainer = document.getElementById('preview-hobbies');
-    hobbiesContainer.innerHTML = '';
-
-    const hobbies = document.getElementById('hobbies').value.split(',').map(h => h.trim()).filter(h => h !== '');
-    hobbies.forEach(hobby => {
-      hobbiesContainer.innerHTML += `<div class="hobby-item">${hobby}</div>`;
-    });
-  }
-
-  function updateColors() {
-    const primaryColor = getPrimaryColor();
-    const secondaryColor = getSecondaryColor();
-
-    document.querySelectorAll('.cv-name, .section-title, .experience-company').forEach(el => {
-      el.style.color = primaryColor;
-    });
-
-    document.querySelectorAll('.cv-title, .experience-title').forEach(el => {
-      el.style.color = '#444';
-    });
-
-    document.querySelectorAll('.section-title').forEach(el => {
-      el.style.borderBottom = `1px solid ${primaryColor}`;
-    });
-
-    document.querySelectorAll('.badge-skill').forEach(el => {
-      el.style.background = secondaryColor;
-      el.style.color = getContrastColor(secondaryColor);
-    });
-
-    document.querySelectorAll('.contact-icon i').forEach(el => {
-      el.style.color = primaryColor;
-    });
-
-    document.querySelectorAll('.action-btn i').forEach(el => {
-      el.style.color = primaryColor;
-    });
-  }
-
-  function getPrimaryColor() {
-    switch (currentPalette) {
-      case 'beige-brown': return '#8B4513';
-      case 'blue-gray': return '#808080';
-      case 'pink-red': return '#FF0000';
-      case 'yellow': return '#FFD700';
-      default: return '#2c3e50';
-    }
-  }
-
-  function getSecondaryColor() {
-    switch (currentPalette) {
-      case 'beige-brown': return '#F5F5DC';
-      case 'blue-gray': return '#87CEEB';
-      case 'pink-red': return '#FFC0CB';
-      case 'yellow': return '#FFFFE0';
-      default: return '#3498db';
-    }
-  }
-
-  function getContrastColor(hexColor) {
-    const r = parseInt(hexColor.substr(1, 2), 16);
-    const g = parseInt(hexColor.substr(3, 2), 16);
-    const b = parseInt(hexColor.substr(5, 2), 16);
-    const brightness = (r * 299 + g * 587 + b * 114) / 1000;
-    return brightness > 128 ? '#000' : '#fff';
-  }
-
-  // Télécharger le CV en PDF
-  document.getElementById('generate-pdf').addEventListener('click', async function () {
-    const loadingOverlay = showLoading();
-    try {
-      const element = document.querySelector('.cv-preview');
-      const prenom = document.getElementById('prenom').value;
-      const nom = document.getElementById('nom').value;
-
-      const canvas = await html2canvas(element, {
-        scale: 2,
-        useCORS: true,
-        logging: false
-      });
-
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jspdf.jsPDF({
-        orientation: 'portrait',
-        unit: 'pt',
-        format: 'a4'
-      });
-
-      const imgWidth = canvas.width;
-      const imgHeight = canvas.height;
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = pdf.internal.pageSize.getHeight();
-      const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
-      const finalWidth = imgWidth * ratio;
-      const finalHeight = imgHeight * ratio;
-      const x = (pdfWidth - finalWidth) / 2;
-      const y = (pdfHeight - finalHeight) / 2;
-
-      pdf.addImage(imgData, 'PNG', x, y, finalWidth, finalHeight);
-      pdf.save(`CV_${prenom}_${nom}.pdf`);
-      showSuccessMessage("Votre CV PDF est prêt au téléchargement");
-
-    } catch (error) {
-      console.error("Erreur lors de la génération du PDF:", error);
-      showErrorMessage("Erreur lors de la génération du document PDF. Veuillez réessayer.");
-    } finally {
-      document.body.removeChild(loadingOverlay);
-    }
-  });
-
-  function showLoading() {
-    const overlay = document.createElement('div');
-    overlay.className = 'loading-overlay';
-    overlay.innerHTML = `
-      <div class="spinner"></div>
-      <div>Génération du document en cours...</div>
-    `;
-    document.body.appendChild(overlay);
-    return overlay;
-  }
-
-  function showSuccessMessage(message) {
-    const successMsg = document.createElement('div');
-    successMsg.className = 'download-message';
-    successMsg.innerHTML = `
-      <i class="fas fa-check-circle"></i>
-      <div>${message}</div>
-    `;
-    document.body.appendChild(successMsg);
-    setTimeout(() => successMsg.remove(), 3000);
-  }
-
-  function showErrorMessage(message) {
-    const errorMsg = document.createElement('div');
-    errorMsg.className = 'download-message';
-    errorMsg.style.background = 'rgba(220, 53, 69, 0.9)';
-    errorMsg.innerHTML = `
-      <i class="fas fa-exclamation-circle"></i>
-      <div>${message}</div>
-    `;
-    document.body.appendChild(errorMsg);
-    setTimeout(() => errorMsg.remove(), 5000);
-  }
-});
-
-  let deferredPrompt;
-
-  window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault(); // Empêche le prompt automatique
-    deferredPrompt = e;
-    const btn = document.getElementById('installButton');
-    if (btn) btn.style.display = 'inline-block';
-  });
-
-  window.addEventListener('DOMContentLoaded', () => {
-    const btn = document.getElementById('installButton');
-    if (!btn) return;
-
-    btn.addEventListener('click', async () => {
-      if (deferredPrompt) {
-        deferredPrompt.prompt();
-        const { outcome } = await deferredPrompt.userChoice;
-        console.log('Résultat de l\'installation :', outcome);
-        deferredPrompt = null;
-        btn.style.display = 'none';
-      }
-    });
-  });
-
-  // Enregistrement du Service Worker
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./service-worker.js')
-        .then(registration => {
-          console.log('Service Worker enregistré avec la portée :', registration.scope);
-        })
-        .catch(error => {
-          console.error('Échec de l\'enregistrement du Service Worker :', error);
+    // Gestion des palettes de couleurs
+    document.querySelectorAll('.color-option').forEach(option => {
+      option.addEventListener('click', function () {
+        // Supprimer la classe 'active' de tous les autres options
+        document.querySelectorAll('.color-option').forEach(opt => {
+          opt.classList.remove('active');
         });
+        // Ajouter la classe 'active' à l'option cliquée
+        this.classList.add('active');
+        currentPalette = this.dataset.palette; // Mettre à jour la palette sélectionnée
+        updatePreview(); // Mettre à jour la prévisualisation avec les nouvelles couleurs
+      });
     });
-  }
+
+    // Bouton de prévisualisation
+    document.getElementById('preview-btn').addEventListener('click', updatePreview);
+
+    // Mettre à jour la prévisualisation au chargement initial de la page
+    updatePreview();
+
+    // Fonction pour mettre à jour la prévisualisation du CV
+    function updatePreview() {
+      // Mettre à jour les informations de base (nom, poste, profil)
+      document.getElementById('preview-name').textContent =
+        `${document.getElementById('prenom').value} ${document.getElementById('nom').value}`;
+
+      document.getElementById('preview-title').textContent =
+        document.getElementById('poste').value;
+
+      document.getElementById('preview-profile').textContent =
+        document.getElementById('profil').value;
+
+      // Mettre à jour la section contact
+      const contactContainer = document.getElementById('preview-contact');
+      contactContainer.innerHTML = ''; // Vider le contenu précédent
+
+      const contactItems = [
+        { icon: 'map-marker-alt', value: document.getElementById('lieu').value, id: 'location' },
+        { icon: 'phone', value: document.getElementById('telephone').value, id: 'phone' },
+        { icon: 'envelope', value: document.getElementById('email').value, id: 'email' },
+        { icon: 'linkedin', value: document.getElementById('linkedin').value, id: 'linkedin' },
+        { icon: 'globe', value: document.getElementById('website').value, id: 'website' }
+      ];
+
+      contactItems.forEach(item => {
+        if (item.value) { // N'afficher que si la valeur est présente
+          const contactHTML = `
+            <div class="contact-item">
+              <span class="contact-icon"><i class="fas fa-${item.icon}"></i></span>
+              <span id="preview-${item.id}">${item.value}</span>
+            </div>
+          `;
+          contactContainer.innerHTML += contactHTML;
+        }
+      });
+
+      // Mettre à jour les couleurs basées sur la palette sélectionnée
+      updateColors();
+
+      // Mettre à jour les expériences professionnelles
+      const expContainer = document.getElementById('preview-experiences');
+      expContainer.innerHTML = '';
+
+      document.querySelectorAll('.experience-item').forEach(item => {
+        const entreprise = item.querySelector('[name="entreprise"]').value;
+        const poste = item.querySelector('[name="posteExp"]').value;
+        const debut = item.querySelector('[name="debutExp"]').value;
+        const fin = item.querySelector('[name="finExp"]').value;
+        const taches = item.querySelector('[name="taches"]').value.split('\n').filter(t => t.trim() !== '');
+
+        if (entreprise || poste) {
+          const expHTML = `
+            <div class="cv-experience">
+              <div class="experience-company">${entreprise}</div>
+              <div class="experience-title">${poste}</div>
+              <div class="experience-date">${debut} - ${fin}</div>
+              <ul class="experience-tasks">
+                ${taches.map(t => `<li>${t}</li>`).join('')}
+              </ul>
+            </div>
+          `;
+          expContainer.innerHTML += expHTML;
+        }
+      });
+
+      // Mettre à jour les formations
+      const formContainer = document.getElementById('preview-formations');
+      formContainer.innerHTML = '';
+
+      document.querySelectorAll('.formation-item').forEach(item => {
+        const diplome = item.querySelector('[name="diplome"]').value;
+        const ecole = item.querySelector('[name="ecole"]').value;
+        const annees = item.querySelector('[name="annees"]').value;
+        const lieu = item.querySelector('[name="lieuFormation"]').value;
+
+        if (diplome || ecole) {
+          const formHTML = `
+            <div class="cv-formation">
+              <div class="experience-title">${diplome}</div>
+              <div>${ecole} | ${lieu}</div>
+              <div class="experience-date">${annees}</div>
+            </div>
+          `;
+          formContainer.innerHTML += formHTML;
+        }
+      });
+
+      // Mettre à jour les compétences
+      const compContainer = document.getElementById('preview-competences');
+      compContainer.innerHTML = '';
+
+      const competences = document.getElementById('competences').value.split(',').map(c => c.trim()).filter(c => c !== '');
+      competences.forEach(comp => {
+        compContainer.innerHTML += `<div class="badge-skill">${comp}</div>`;
+      });
+
+      // Mettre à jour les langues
+      const langContainer = document.getElementById('preview-langues');
+      langContainer.innerHTML = '';
+
+      const langues = document.getElementById('langues').value.split(',').map(l => l.trim()).filter(l => l !== '');
+      langues.forEach(lang => {
+        const [nom, niveau] = lang.split(':').map(p => p.trim());
+        if (nom && niveau) {
+          langContainer.innerHTML += `
+            <div class="language-item">
+              <div class="language-name">${nom}:</div>
+              <div class="language-level">${niveau}</div>
+            </div>
+          `;
+        }
+      });
+
+      // Mettre à jour les centres d'intérêt (Hobbies)
+      const hobbiesContainer = document.getElementById('preview-hobbies');
+      hobbiesContainer.innerHTML = '';
+
+      const hobbies = document.getElementById('hobbies').value.split(',').map(h => h.trim()).filter(h => h !== '');
+      hobbies.forEach(hobby => {
+        hobbiesContainer.innerHTML += `<div class="hobby-item">${hobby}</div>`;
+      });
+    }
+
+    // Fonction pour mettre à jour les couleurs du CV en fonction de la palette sélectionnée
+    function updateColors() {
+      const primaryColor = getPrimaryColor();
+      const secondaryColor = getSecondaryColor();
+
+      document.querySelectorAll('.cv-name, .section-title, .experience-company').forEach(el => {
+        el.style.color = primaryColor;
+      });
+
+      document.querySelectorAll('.cv-title, .experience-title').forEach(el => {
+        el.style.color = '#444'; // Couleur de texte fixe pour ces éléments
+      });
+
+      document.querySelectorAll('.section-title').forEach(el => {
+        el.style.borderBottom = `1px solid ${primaryColor}`;
+      });
+
+      document.querySelectorAll('.badge-skill').forEach(el => {
+        el.style.background = secondaryColor;
+        el.style.color = getContrastColor(secondaryColor); // Ajuster la couleur du texte pour le contraste
+      });
+
+      document.querySelectorAll('.contact-icon i').forEach(el => {
+        el.style.color = primaryColor;
+      });
+
+      document.querySelectorAll('.action-btn i').forEach(el => {
+        el.style.color = primaryColor;
+      });
+    }
+
+    // Fonctions pour obtenir les couleurs primaires et secondaires selon la palette
+    function getPrimaryColor() {
+      switch (currentPalette) {
+        case 'beige-brown': return '#8B4513';
+        case 'blue-gray': return '#808080';
+        case 'pink-red': return '#FF0000';
+        case 'yellow': return '#FFD700';
+        default: return '#2c3e50'; // Couleur par défaut
+      }
+    }
+
+    function getSecondaryColor() {
+      switch (currentPalette) {
+        case 'beige-brown': return '#F5F5DC';
+        case 'blue-gray': return '#87CEEB';
+        case 'pink-red': return '#FFC0CB';
+        case 'yellow': return '#FFFFE0';
+        default: return '#3498db'; // Couleur par défaut
+      }
+    }
+
+    // Fonction pour déterminer une couleur de texte contrastante (noir ou blanc)
+    function getContrastColor(hexColor) {
+      const r = parseInt(hexColor.substr(1, 2), 16);
+      const g = parseInt(hexColor.substr(3, 2), 16);
+      const b = parseInt(hexColor.substr(5, 2), 16);
+      // Calculer la luminosité perçue (ITU-R BT.709)
+      const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+      return brightness > 128 ? '#000' : '#fff'; // Retourne noir pour couleurs claires, blanc pour couleurs sombres
+    }
+
+    // Télécharger le CV en PDF
+    document.getElementById('generate-pdf').addEventListener('click', async function () {
+      const loadingOverlay = showLoading(); // Afficher l'indicateur de chargement
+      try {
+        const element = document.querySelector('.cv-preview'); // Cible l'élément à convertir
+        const prenom = document.getElementById('prenom').value;
+        const nom = document.getElementById('nom').value;
+
+        // Convertir l'élément HTML en canvas (image)
+        const canvas = await html2canvas(element, {
+          scale: 2, // Augmenter la résolution pour une meilleure qualité
+          useCORS: true,
+          logging: false
+        });
+
+        const imgData = canvas.toDataURL('image/png'); // Obtenir les données de l'image
+        const pdf = new jspdf.jsPDF({
+          orientation: 'portrait',
+          unit: 'pt',
+          format: 'a4'
+        });
+
+        // Calculer les dimensions pour que l'image tienne sur la page PDF
+        const imgWidth = canvas.width;
+        const imgHeight = canvas.height;
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = pdf.internal.pageSize.getHeight();
+        const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
+        const finalWidth = imgWidth * ratio;
+        const finalHeight = imgHeight * ratio;
+        const x = (pdfWidth - finalWidth) / 2;
+        const y = (pdfHeight - finalHeight) / 2;
+
+        pdf.addImage(imgData, 'PNG', x, y, finalWidth, finalHeight); // Ajouter l'image au PDF
+        pdf.save(`CV_${prenom}_${nom}.pdf`); // Sauvegarder le PDF
+        showSuccessMessage("Votre CV PDF est prêt au téléchargement");
+
+      } catch (error) {
+        console.error("Erreur lors de la génération du PDF:", error);
+        showErrorMessage("Erreur lors de la génération du document PDF. Veuillez réessayer.");
+      } finally {
+        document.body.removeChild(loadingOverlay); // Cacher l'indicateur de chargement
+      }
+    });
+
+    // Fonctions pour afficher les messages de chargement, succès et erreur
+    function showLoading() {
+      const overlay = document.createElement('div');
+      overlay.className = 'loading-overlay';
+      overlay.innerHTML = `
+        <div class="spinner"></div>
+        <div>Génération du document en cours...</div>
+      `;
+      document.body.appendChild(overlay);
+      return overlay;
+    }
+
+    function showSuccessMessage(message) {
+      const successMsg = document.createElement('div');
+      successMsg.className = 'download-message';
+      successMsg.innerHTML = `
+        <i class="fas fa-check-circle"></i>
+        <div>${message}</div>
+      `;
+      document.body.appendChild(successMsg);
+      setTimeout(() => successMsg.remove(), 3000); // Supprimer après 3 secondes
+    }
+
+    function showErrorMessage(message) {
+      const errorMsg = document.createElement('div');
+      errorMsg.className = 'download-message';
+      errorMsg.style.background = 'rgba(220, 53, 69, 0.9)'; // Fond rouge pour l'erreur
+      errorMsg.innerHTML = `
+        <i class="fas fa-exclamation-circle"></i>
+        <div>${message}</div>
+      `;
+      document.body.appendChild(errorMsg);
+      setTimeout(() => errorMsg.remove(), 5000); // Supprimer après 5 secondes
+    }
+  });
 </script>
 
 
