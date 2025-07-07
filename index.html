@@ -6,13 +6,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CV Gen</title>
 
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Edu+AU+VIC+WA+NT+Dots:wght@400..700&display=swap" rel="stylesheet">
 
-<link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png">
-<link rel="shortcut icon" href="./favicon.ico">
-<link rel="manifest" href="./manifest.json">
-
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#2c3e50">
+  <link rel="shortcut icon" href="/favicon.ico">
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -23,7 +26,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <style>
-  :root {
+:root {
     --primary: #2c3e50;
     --secondary: #3498db;
     --light: #ecf0f1;
@@ -37,69 +40,202 @@
     --red: #FF0000;
     --lightyellow: #FFFFE0;
     --darkyellow: #FFD700;
-  }
+    --gold: #FFD700;
+    --dark-bg: #1a1a1a;
+--placeholder:#f1c40f;
+}
+/* 🔧 Couleur des placeholders (fonctionne partout) */
+input::placeholder,
+textarea::placeholder {
+  color: var(--placeholder) !important; /* Jaune or */
+  opacity: 0;
+}
 
-  body {
-    background-color: #f5f7fa;
+input::-webkit-input-placeholder,
+textarea::-webkit-input-placeholder {
+  color: var(--placeholder) !important;
+}
+
+input:-ms-input-placeholder,
+textarea:-ms-input-placeholder {
+  color:var(--placeholder) !important;
+}
+
+input::-ms-input-placeholder,
+textarea::-ms-input-placeholder {
+  color: var(--placeholder) !important;
+}
+
+
+
+
+/* ==================== STYLE MODERNISÉ (SAUF PRÉVISUALISATION) ==================== */
+body {
+    background-color: var(--dark-bg);
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: #333;
-    padding-top: 20px;
-  }
+    color: #e0e0e0;
+    padding-top: 0;
+    line-height: 1.6;
+}
 
-  .header {
-    background: linear-gradient(135deg, var(--primary), var(--secondary));
-    color: white;
-    padding: 25px 0;
-    border-radius: 0 0 15px 15px;
-    margin-bottom: 30px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  }
 
-  .card {
-    border-radius: 12px;
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+/* Navbar modernisée */
+.header {
+  background-color: transparent;
+
+  padding: 12px 0;
+  position: relative;
+  top: 0;
+  z-index: 1000;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+
+.logo-container {
+display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+}
+.text-container {
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+  flex: 0 1 auto;
+}
+
+.header .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+
+
+.navbar-icon {
+  width: 10%;
+  height: 10%;
+  border-radius: 100%;
+  
+  padding: 2px;
+  background: transparent;
+  object-fit: contain;
+  transition: all 0.3s ease;
+}
+
+.navbar-icon:hover {
+  transform: scale(1.05);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.text-container h1 {
+font-family: "Edu AU VIC WA NT Dots", cursive;
+  font-optical-sizing: auto;
+  font-weight: <weight>;
+  font-style: normal;
+
+  font-size: 3rem;
+  margin: 0;
+  font-weight: 400;
+  color: var(--placeholder);
+  letter-spacing: -1px;
+}
+
+.text-container h1 i {
+  margin-right: 10px;
+  color: #FFD700;
+}
+
+.text-container .lead {
+  margin: 10px 0 0 0;
+  font-size: 1rem;
+  opacity: 0.7;
+  color: rgba(255, 255, 255, 0.8);
+letter-spacing: 2px;
+
+font-family: "Edu AU VIC WA NT Dots", cursive;
+  font-optical-sizing: auto;
+  font-weight: <weight>;
+  font-style: normal;
+}
+
+#installButton {
+  background-color: transparent;
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: all 0.3s ease;
+}
+
+#installButton:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: scale(1.1);
+}
+
+#installButton i {
+  font-size: 1.2rem;
+}
+
+/* Cartes modernisées */
+.card {
+    border-radius: 8px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
     border: none;
+margin-top: 10px;
     margin-bottom: 25px;
     transition: transform 0.3s ease;
-  }
+    background-color: #2d2d2d;
+}
 
-  .card:hover {
+.card:hover {
     transform: translateY(-5px);
-  }
+}
 
-  .card-header {
-    background: linear-gradient(135deg, var(--primary), var(--dark));
+.card-header {
+    background-color: #2d2d2d;
     color: white;
     font-weight: 600;
-    border-radius: 12px 12px 0 0 !important;
+    border-radius: 8px 8px 0 0 !important;
     padding: 15px 20px;
-  }
+    border-bottom: 2px solid var(--gold);
+}
 
-  .form-section {
+.form-section {
     padding: 20px;
-  }
+}
 
-  .array-item {
-    border: 1px solid #e0e6ed;
-    border-radius: 10px;
+.array-item {
+    border: 1px solid rgba(255, 215, 0, 0.15);
+    border-radius: 8px;
     padding: 20px;
     margin-bottom: 20px;
-    background: #f8fafc;
+    background: rgba(45, 45, 45, 0.7);
     position: relative;
-  }
+}
 
-  .btn-add {
+.btn-add {
     margin-top: 10px;
-    background: var(--secondary);
+    background: var(--gold);
     border: none;
     font-weight: 500;
-  }
+    color: #333;
+}
 
-  .btn-add:hover {
-    background: var(--primary);
-  }
+.btn-add:hover {
+    background: #e6c200;
+}
 
-  .btn-remove {
+.btn-remove {
     position: absolute;
     top: 10px;
     right: 10px;
@@ -110,157 +246,161 @@
     align-items: center;
     justify-content: center;
     padding: 0;
-  }
+    background-color: #ff4444;
+    color: white;
+    border: none;
+}
 
-  .preview-container {
-    background: white;
+/* Styles pour les inputs */
+.form-control {
+    background-color: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #f0f0f0;
+    transition: all 0.3s;
+}
+
+.form-control:focus {
+    background-color: rgba(255, 255, 255, 0.15);
+    border-color: var(--gold);
+    box-shadow: 0 0 0 0.25rem rgba(255, 215, 0, 0.15);
+    color: white;
+}
+
+.form-label {
+    color: #e0e0e0;
+    font-weight: 500;
+}
+
+/* ==================== PRÉVISUALISATION (STYLE ORIGINAL) ==================== */
+.preview-container {
+    background: #2d2d2d;
     padding: 30px;
     border-radius: 12px;
     box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
     min-height: 100%;
     overflow: auto;
-  }
+}
 
-  .cv-preview {
+.cv-preview {
     background: white;
     border: 1px solid #e0e6ed;
     padding: 30px;
     font-family: 'Calibri', sans-serif;
     color: #333;
     min-height: 842px;
-    /* A4 height */
     width: 595px;
-    /* A4 width */
     position: relative;
     margin: 0 auto;
     box-sizing: border-box;
+}
 
-  }
-
-  .cv-header-grid {
+.cv-header-grid {
     display: flex;
     align-items: center;
     margin-bottom: 30px;
     padding-bottom: 20px;
     border-bottom: 1px solid #eee;
-  }
+}
 
-  .cv-header-grid .photo-col {
+.cv-header-grid .photo-col {
     flex: 0 0 auto;
     width: 25%;
-    /* Adjust as needed */
     text-align: center;
-  }
+}
 
-  .cv-header-grid .info-col {
+.cv-header-grid .info-col {
     flex: 1 1 auto;
     width: 75%;
-    /* Adjust as needed */
     padding-left: 20px;
-  }
+}
 
-  .cv-name {
+.cv-name {
     font-size: 20px;
-    /* Nom et Prénoms */
     font-weight: bold;
     margin-bottom: 5px;
-  }
+}
 
-  .cv-title {
+.cv-title {
     font-size: 14px;
-    /* Poste recherché */
     font-weight: 500;
     color: #444;
     margin-bottom: 15px;
-  }
+}
 
-  .cv-section {
+.cv-section {
     margin-bottom: 25px;
-  }
+}
 
-  .section-title {
+.section-title {
     font-size: 14px;
-    /* Titre */
     font-weight: bold;
     padding-bottom: 5px;
     margin-bottom: 15px;
-  }
+}
 
-  /* Styles pour le contenu général */
-  .cv-preview p,
-  .cv-preview ul li,
-  .cv-preview .badge-skill,
-  .cv-preview .language-item,
-  .cv-preview .hobby-item,
-  .cv-preview .experience-title,
-  .cv-preview .cv-experience .experience-company,
-  .cv-preview .cv-formation>div {
+.cv-preview p,
+.cv-preview ul li,
+.cv-preview .badge-skill,
+.cv-preview .language-item,
+.cv-preview .hobby-item,
+.cv-preview .experience-title,
+.cv-preview .cv-experience .experience-company,
+.cv-preview .cv-formation>div {
     font-size: 10px;
-    /* Contenu */
-  }
+}
 
-
-  .cv-contact {
+.cv-contact {
     display: block;
-    /* Change from flex to block for vertical stacking */
     margin-bottom: 15px;
     text-align: left;
-    /* Align contact items to the left */
-  }
+}
 
-  .contact-item {
+.contact-item {
     display: flex;
     align-items: center;
     margin-bottom: 8px;
-    /* Reduce margin for tighter list */
-  }
+}
 
-  .contact-item span {
+.contact-item span {
     font-size: 11px;
-    /* Adresse et contact */
-  }
+}
 
-  /* Correction : Ajout d'espacement pour les icônes de contact */
-  .contact-item .contact-icon i {
+.contact-item .contact-icon i {
     margin-right: 8px;
-    /* Ajoute de l'espace à droite de l'icône */
-  }
+}
 
-
-  .cv-experience,
-  .cv-formation {
+.cv-experience,
+.cv-formation {
     margin-bottom: 20px;
-  }
+}
 
-  .experience-title {
+.experience-title {
     font-weight: bold;
     margin-bottom: 5px;
-  }
+}
 
-  .experience-company {
+.experience-company {
     font-weight: 500;
     margin-bottom: 5px;
-  }
+}
 
-  .experience-date {
+.experience-date {
     color: #777;
     font-style: italic;
     margin-bottom: 8px;
     font-size: 9px;
-    /* Dates et lieu */
-  }
+}
 
-  .experience-tasks {
+.experience-tasks {
     padding-left: 20px;
-  }
+}
 
-  /* Dates et lieu pour formation */
-  .cv-formation>div:nth-child(2),
-  .cv-formation>div:nth-child(3) {
+.cv-formation>div:nth-child(2),
+.cv-formation>div:nth-child(3) {
     font-size: 9px;
-  }
+}
 
-  .cv-footer {
+.cv-footer {
     position: absolute;
     bottom: 20px;
     left: 0;
@@ -269,16 +409,16 @@
     font-size: 10px;
     color: #777;
     padding: 0 30px;
-  }
+}
 
-  .badge-skill {
+.badge-skill {
     padding: 5px 10px;
     border-radius: 4px;
     margin: 0 5px 5px 0;
     display: inline-block;
-  }
+}
 
-  .action-btn {
+.action-btn {
     width: 50px;
     height: 50px;
     border-radius: 50%;
@@ -290,28 +430,28 @@
     transition: all 0.3s;
     border: none;
     background: transparent;
-  }
+}
 
-  .action-btn:hover {
+.action-btn:hover {
     transform: scale(1.1);
-  }
+}
 
-  .action-btn i {
+.action-btn i {
     transition: all 0.3s;
-  }
+}
 
-  .action-btn:hover i {
+.action-btn:hover i {
     transform: scale(1.2);
-  }
+}
 
-  .preview-actions {
+.preview-actions {
     display: flex;
     justify-content: center;
     margin-top: 30px;
     gap: 15px;
-  }
+}
 
-  .photo-preview {
+.photo-preview {
     width: 120px;
     height: 120px;
     border-radius: 50%;
@@ -320,85 +460,86 @@
     display: block;
     background: #f0f0f0;
     border: none;
-  }
+}
 
-  .language-item {
+.language-item {
     margin-bottom: 8px;
     display: flex;
-  }
+}
 
-  .language-name {
+.language-name {
     width: 100px;
     font-weight: 500;
-  }
+}
 
-  .language-level {
+.language-level {
     flex-grow: 1;
-  }
+}
 
-  .hobbies-list {
+.hobbies-list {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
-  }
+}
 
-  .hobby-item {
+.hobby-item {
     padding: 5px 15px;
     border-radius: 20px;
     font-size: 14px;
     background: transparent;
     border: 1px solid #ddd;
-  }
+}
 
-  .color-palette {
+/* ==================== AUTRES STYLES ==================== */
+.color-palette {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
     margin-top: 15px;
-  }
+}
 
-  .color-option {
+.color-option {
     width: 40px;
     height: 40px;
     border-radius: 50%;
     cursor: pointer;
     border: 2px solid transparent;
     transition: all 0.3s;
-  }
+}
 
-  .color-option:hover {
+.color-option:hover {
     transform: scale(1.1);
-  }
+}
 
-  .color-option.active {
+.color-option.active {
     border-color: #000;
     box-shadow: 0 0 0 2px white, 0 0 0 4px #000;
-  }
+}
 
-  .beige-brown {
+.beige-brown {
     background: linear-gradient(135deg, var(--beige), var(--brown));
-  }
+}
 
-  .blue-gray {
+.blue-gray {
     background: linear-gradient(135deg, var(--skyblue), var(--gray));
-  }
+}
 
-  .pink-red {
+.pink-red {
     background: linear-gradient(135deg, var(--pink), var(--red));
-  }
+}
 
-  .yellow {
+.yellow {
     background: linear-gradient(135deg, var(--lightyellow), var(--darkyellow));
-  }
+}
 
-  .social-inputs {
+.social-inputs {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 15px;
     margin-top: 15px;
-  }
+}
 
-  .download-message {
+.download-message {
     position: fixed;
     top: 20px;
     left: 50%;
@@ -411,14 +552,14 @@
     display: flex;
     align-items: center;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-  }
+}
 
-  .download-message i {
+.download-message i {
     margin-right: 10px;
     font-size: 1.2em;
-  }
+}
 
-  .loading-overlay {
+.loading-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -432,9 +573,9 @@
     color: white;
     font-size: 24px;
     flex-direction: column;
-  }
+}
 
-  .spinner {
+.spinner {
     width: 50px;
     height: 50px;
     border: 5px solid rgba(255, 255, 255, 0.3);
@@ -442,27 +583,50 @@
     border-top-color: white;
     animation: spin 1s linear infinite;
     margin-bottom: 20px;
-  }
+}
 
-  @keyframes spin {
+@keyframes spin {
     to {
-      transform: rotate(360deg);
+        transform: rotate(360deg);
     }
-  }
+}
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 768px) {
+    .navbar-brand {
+        font-size: 1.1rem;
+    }
+    
+    .navbar-brand::before {
+        width: 28px;
+        height: 28px;
+    }
+    
+    #installButton {
+        padding: 6px 15px;
+        font-size: 0.9rem;
+    }
+}
 </style>
 </head>
 
-<body>
-  <nav class="navbar navbar-dark bg-primary mb-4">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="#">CV Gen</a>
-        <button id="installButton" style="display:none;" class="btn btn-primary">
-  Installer l'application
-</button>
+<body> 
+<div class="header">
+  <div class="container d-flex align-items-center justify-content-between">
+    <img src="android-chrome-512x512.png" class="navbar-icon" alt="Logo">
 
+    <div class="text-center mx-auto text-container">
+      <h1>CV by Sergio</h1>
+      <p class="lead">Créez votre CV en quelques minutes</p>
     </div>
-  </nav>
-  <div class="container">
+
+    <button id="installButton" class="btn btn-outline-light">
+      <i class="fas fa-download"></i>
+    </button>
+  </div>
+</div>
+
+    <div class="container">
     <div class="row">
       <div class="col-lg-6">
         <div class="card">
@@ -1197,27 +1361,6 @@ if ('serviceWorker' in navigator) {
 
 
     </script>
-  <script>
-  let deferredPrompt;
-
-  window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault(); // Empêche le prompt automatique
-    deferredPrompt = e;
-    const btn = document.getElementById('installButton');
-    if (btn) btn.style.display = 'inline-block';
-  });
-
-  document.getElementById('installButton')?.addEventListener('click', async () => {
-    if (deferredPrompt) {
-      deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
-      console.log('Résultat de l\'installation :', outcome);
-      deferredPrompt = null;
-      document.getElementById('installButton').style.display = 'none';
-    }
-  });
-</script>
-
 </body>
 
 </html>
